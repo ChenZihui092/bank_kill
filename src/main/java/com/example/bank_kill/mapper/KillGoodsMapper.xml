@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bank_kill.mapper.KillGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.bank_kill.model.KillGoods">
+        <id column="kill_good_id" property="killGoodId" />
+        <result column="good_id" property="goodId" />
+        <result column="good_stock" property="goodStock" />
+        <result column="good_name" property="goodName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        kill_good_id, good_id, good_stock, good_name
+    </sql>
+
+</mapper>
