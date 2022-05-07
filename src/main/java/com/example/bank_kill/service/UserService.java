@@ -2,6 +2,7 @@ package com.example.bank_kill.service;
 
 import com.example.bank_kill.Dto.LoginDto;
 import com.example.bank_kill.Dto.UserRegDto;
+import com.example.bank_kill.Dto.UserUpdateDto;
 import com.example.bank_kill.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,7 +11,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author jfy
@@ -18,7 +19,16 @@ import java.util.Map;
  */
 public interface UserService extends IService<User> {
     User findById(int userId);
-    Map<String,Object> reg(UserRegDto userRegDto);
-    Map<String,Object> login(HttpSession session, LoginDto loginDto);
-    Map<String,Object> logout(HttpSession session);
+
+    Map<String, Object> reg(UserRegDto userRegDto);
+
+    Map<String, Object> login(HttpSession session, LoginDto loginDto);
+
+    Map<String, Object> logout(HttpSession session);
+
+    Map<String, Object> getAllUserInfo(Integer pageNum, Integer pageSize, String search);
+
+    Map<String, Object> delete(Integer userId);
+
+    Map<String, Object> update(UserUpdateDto userUpdateDto);
 }
