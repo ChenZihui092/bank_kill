@@ -1,5 +1,7 @@
 package com.example.bank_kill.service;
 
+import com.example.bank_kill.Dto.KillRuleDto;
+import com.example.bank_kill.exception.BankException;
 import com.example.bank_kill.model.KillRule;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface KillRuleService extends IService<KillRule> {
 
+//    void addKillRule(KillRuleDto killRuleDto) throws BankException;
 }

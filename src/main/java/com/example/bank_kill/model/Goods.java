@@ -29,7 +29,7 @@ public class Goods implements Serializable {
 
     private Integer ruleId;
 
-    private Integer killGoodId;
+
 
     private String goodName;
 
@@ -41,8 +41,6 @@ public class Goods implements Serializable {
     private Date startTime;
 
     private Date endTime;
-
-    private KillRule killRule;
 
     /**
      * 库存	            

@@ -1,10 +1,32 @@
 package com.example.bank_kill.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.example.bank_kill.Dto.GoodsDto;
+import com.example.bank_kill.Dto.KillGoodsDto;
+import com.example.bank_kill.Dto.KillRuleDto;
+import com.example.bank_kill.exception.BankException;
+import com.example.bank_kill.mapper.KillGoodsMapper;
+import com.example.bank_kill.mapper.KillRuleMapper;
 import com.example.bank_kill.model.Goods;
 import com.example.bank_kill.mapper.GoodsMapper;
+import com.example.bank_kill.model.KillGoods;
+import com.example.bank_kill.model.KillRule;
 import com.example.bank_kill.service.GoodsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.bank_kill.service.KillGoodsService;
+import com.example.bank_kill.service.KillRuleService;
+import com.example.bank_kill.util.CacheConstantUtil;
+import com.example.bank_kill.util.CacheUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -16,5 +38,141 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements GoodsService {
+
+    private final static Logger logger = LoggerFactory.getLogger(GoodsServiceImpl.class);
+
+    @Autowired
+    private KillRuleMapper killRuleMapper;
+    @Autowired
+    private GoodsMapper goodsMapper;
+    @Autowired
+    private KillGoodsMapper killGoodsMapper;
+    @Autowired
+    private KillGoodsService killGoodsService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    /**
+     * 创建商品
+     * 必填项：goodName,startTime,endTime,goodStock,goodKillPrice,每次 创建一个商品必须填写规则
+     */
+    @Override
+    public void addGood(GoodsDto goodsDto) throws BankException {
+        if (goodsDto.getGoodsId() != null) throw new BankException("goodId不用传");
+        if (goodsDto.getStartTime() == null || goodsDto.getEndTime() == null || goodsDto.getGoodStock() == null || goodsDto.getGoodPrice() == null || goodsDto.getGoodPrice() < 0
+                || goodsDto.getGoodKillPrice() == null || goodsDto.getGoodKillPrice() < 0)
+            throw new BankException("请查看日期、价格、库存是否填写规范");
+        if (goodsDto.getKillRuleDto() == null) throw new BankException("创建商品时，必须填写规则");
+
+
+        KillRuleDto killRuleDto = goodsDto.getKillRuleDto();
+        KillRule killRule = new KillRule();
+        killRule.setCreateTime(new Date());
+        killRule.setIsdelete(false);
+        killRule.setLimiteAge(killRuleDto.getLimitAge());
+        killRule.setLimitIsBlack(killRuleDto.getLimitIsBlack());
+        int ruleId = killRuleMapper.insert(killRule);
+/**省略set*/
+        Goods goods = new Goods();
+        goods.setCreateTime(new Date());
+        goods.setGoodImg(goodsDto.getGoodImg());
+        goods.setGoodsDetail(goodsDto.getGoodsDetail());
+        goods.setGoodName(goodsDto.getGoodName());
+        goods.setEndTime(goodsDto.getEndTime());
+        goods.setStartTime(goodsDto.getStartTime());
+        goods.setGoodKillPrice(goodsDto.getGoodKillPrice());
+        goods.setGoodPrice(goodsDto.getGoodPrice());
+        goods.setIsdelete(false);
+        goods.setRuleId(ruleId);
+
+        Integer goodId = goodsMapper.insert(goods);
+
+        KillGoods killGoods = new KillGoods();
+        killGoods.setGoodName(goodsDto.getGoodName());
+        killGoods.setGoodStock(goodsDto.getGoodStock());
+        killGoods.setGoodId(goodId);
+        killGoodsMapper.insert(killGoods);
+
+        redisTemplate.opsForValue().set(CacheUtil.getCacheKey(CacheConstantUtil.KILL_GOODS,goodId+""),killGoods,1, TimeUnit.DAYS);
+
+
+    }
+
+    @Override
+    public void deleteGood(Integer goodId) throws BankException {
+        if (goodId == null || goodId == 0) throw new BankException("请输入正确的goodId");
+        Goods goods = goodsMapper.selectById(goodId);
+        if (goods == null) throw new BankException("没有找到对应的商品，请输入正确的goodId");
+        UpdateWrapper<Goods> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("good_id", goodId).set("isDelete", 0);
+        goodsMapper.update(null, updateWrapper);
+
+        logger.warn("delete goods , goodId is {}", goodId);
+        UpdateWrapper<KillGoods> updateWrapper1 = new UpdateWrapper<>();
+        updateWrapper1.eq("good_id", goodId).set("is_delete", 0);
+        killGoodsMapper.update(null, updateWrapper1);
+        logger.warn("delete killGood");
+
+
+    }
+
+    /**
+     * 修改商品，
+     *
+     * 用户上传需要修改的部分，系统对东西进行判空，if！=null 表示需要进行修改
+     */
+    @Override
+    public void updateGood(GoodsDto goodsDto) throws BankException {
+        if(goodsDto.getGoodsId()==null) throw new BankException("goodId不能为空");
+        Goods goodsOld = goodsMapper.selectById(goodsDto.getGoodsId());
+        if(goodsOld == null) throw new BankException("没有在数据库找到对应的商品，请输入正确的goodId");
+        Goods goodsNew  = new Goods();
+        goodsNew.setRuleId(goodsDto.getKillRuleDto().getRuleId());
+        goodsNew.setGoodName(goodsDto.getGoodName());
+        goodsNew.setGoodImg(goodsDto.getGoodImg());
+        goodsNew.setGoodsDetail(goodsDto.getGoodsDetail());
+        goodsNew.setStartTime(goodsDto.getStartTime());
+        goodsNew.setEndTime(goodsDto.getEndTime());
+        goodsNew.setGoodStock(goodsDto.getGoodStock());
+        goodsNew.setGoodPrice(goodsDto.getGoodPrice());
+        goodsNew.setGoodKillPrice(goodsDto.getGoodKillPrice());
+        goodsNew.setIsdelete(goodsDto.getIsDelete());
+        goodsNew.setModifyTime(new Date());
+        QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("good_id",goodsDto.getGoodsId());
+       Integer res= goodsMapper.update(goodsNew,queryWrapper);
+        logger.warn("正在更新goods表格{}",res);
+
+        KillGoods killGoodsOld =  killGoodsService.selectByGoodId(goodsDto.getGoodsId());
+        if(killGoodsOld == null) throw  new BankException("没有在kill_goods表里找到对应的数据");
+        KillGoods killGoodsNew = new KillGoods();
+        killGoodsNew.setGoodStock(goodsDto.getGoodStock());
+        killGoodsNew.setGoodName(goodsDto.getGoodName());
+        killGoodsNew.setDelete(goodsDto.getIsDelete());
+        QueryWrapper<KillGoods> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper.eq("kill_good_id",killGoodsOld.getKillGoodId());
+        killGoodsMapper.update(killGoodsNew,queryWrapper1);
+        logger.warn("正在更新kill_goods 表格");
+
+    }
+
+
+    /**
+     * 用户查看对应的商品
+     * 在killGood里查
+     * */
+    @Override
+    public KillGoodsDto selectById(Integer goodId) throws BankException {
+        if(goodId == null || goodId<=0) throw new BankException("请正确填写goodId");
+       KillGoods killGoods = killGoodsService.selectByGoodId(goodId);
+       if(killGoods ==null) throw new BankException("没有找到对应的商品");
+        KillGoodsDto killGoodsDto = new KillGoodsDto();
+        killGoodsDto.setGoodStock(killGoods.getGoodStock());
+        killGoodsDto.setGoodName(killGoods.getGoodName());
+
+
+        return killGoodsDto;
+    }
+
 
 }
