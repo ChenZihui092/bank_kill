@@ -2,13 +2,12 @@ package com.example.bank_kill.controller;
 
 
 import com.example.bank_kill.Dto.KillRuleDto;
+import com.example.bank_kill.constant.ResponseConstant;
 import com.example.bank_kill.service.KillRuleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -23,13 +22,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/killRule")
 public class KillRuleController {
+    private static final Logger logger = LoggerFactory.getLogger(KillRuleController.class);
 
-//    @Autowired
-//    private KillRuleService killRuleService;
-//    @RequestMapping(value = "create",method = RequestMethod.POST)
-//    public Map<String,Object> create(@RequestBody KillRuleDto killRuleDto){
-//        killRuleService
-//    }
+    @Autowired
+    private KillRuleService killRuleService;
+    @RequestMapping(value = "view{id}",method = RequestMethod.GET)
+    public Map<String,Object> viewRule(@RequestParam("ruleId") Integer ruleId){
+        KillRuleDto  killRuleDto=killRuleService.selectById(ruleId);
+        logger.warn("查看规则 {}",killRuleDto);
+        return ResponseConstant.V_UPDATE_SUCCESS;
+    }
 
 }
 

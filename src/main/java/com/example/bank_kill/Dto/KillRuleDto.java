@@ -8,7 +8,7 @@ public class KillRuleDto {
     private Integer ruleId ;
     private Integer limitAge ;
     private Date limitStartDate;
-    private Date limitOverdueTime ;
+    private Integer limitOverdueTime ;
     private Integer limitOverdueAmount;
     private Integer limitOverdueFrequency ;
     private String limitIsUnemployment;

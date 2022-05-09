@@ -16,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface KillRuleService extends IService<KillRule> {
 
 //    void addKillRule(KillRuleDto killRuleDto) throws BankException;
+    KillRuleDto selectById(Integer ruleId) throws BankException;
 }
