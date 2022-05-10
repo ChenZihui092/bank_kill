@@ -6,7 +6,7 @@
     <resultMap id="BaseResultMap" type="com.example.bank_kill.model.Goods">
         <id column="good_id" property="goodId" />
         <result column="rule_id" property="ruleId" />
-        <result column="kill_good_id" property="killGoodId" />
+
         <result column="good_name" property="goodName" />
         <result column="good_Img" property="goodImg" />
         <result column="goods_detail" property="goodsDetail" />
@@ -22,7 +22,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        good_id, rule_id, kill_good_id, good_name, good_Img, goods_detail, start_time, end_time, good_stock, good_price, good_kill_price, isDelete, create_time, modify_time
+        good_id, rule_id, good_name, good_Img,
+goods_detail, start_time, end_time, good_stock, good_price, good_kill_price, isDelete, create_time, modify_time
     </sql>
 
 </mapper>

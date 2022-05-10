@@ -31,6 +31,8 @@ public class KillGoods implements Serializable {
 
     private String goodName;
 
+    private boolean isDelete;
+
 
 
 
