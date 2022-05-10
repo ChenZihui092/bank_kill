@@ -1,9 +1,13 @@
 package com.example.bank_kill.service.impl;
 
+import com.example.bank_kill.Dto.KillRuleDto;
+import com.example.bank_kill.controller.KillRuleController;
+import com.example.bank_kill.exception.BankException;
 import com.example.bank_kill.model.KillRule;
 import com.example.bank_kill.mapper.KillRuleMapper;
 import com.example.bank_kill.service.KillRuleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,5 +20,32 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class KillRuleServiceImpl extends ServiceImpl<KillRuleMapper, KillRule> implements KillRuleService {
+    @Autowired
+    private KillRuleMapper killRuleMapper;
+    @Override
+    public KillRuleDto selectById(Integer ruleId) throws BankException {
+        if(ruleId == null || ruleId<=0 ) throw new BankException("ruleId请输入正确");
+        KillRule killRule = killRuleMapper.selectById(ruleId);
+        if(killRule == null) throw new BankException("没有找到对应的规则");
+        KillRuleDto killRuleDto = new KillRuleDto();
+        killRuleDto.setRuleId(killRule.getRuleId());
+        killRuleDto.setLimitAge(killRule.getLimiteAge());
+        killRuleDto.setLimitStartDate(killRule.getLimitStartDate());
+        killRuleDto.setLimitOverdueTime(killRule.getLimitOverdueTime());
+        killRuleDto.setLimitOverdueAmount(killRule.getLimitOverdueAmount());
+        killRuleDto.setLimitOverdueFrequency(killRule.getLimitOverdueFrequency());
+        killRuleDto.setLimitIsUnemployment(killRule.getLimitIsUnemployment());
+        killRuleDto.setLimitIsBlack(killRule.getLimitIsBlack());
+        killRuleDto.setIsDelete(killRule.getIsdelete());
+        killRuleDto.setCreateTime(killRule.getCreateTime());
+        killRuleDto.setModifyTime(killRule.getModifyTime());
+        return killRuleDto;
+    }
 
+//    @Autowired
+//    private KillRuleMapper killRuleMapper;
+//    @Override
+//    public void addKillRule(KillRuleDto killRuleDto) throws BankException {
+//
+//    }
 }
