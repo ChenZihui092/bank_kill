@@ -27,8 +27,6 @@ public class KillRule implements Serializable {
     @TableId(value = "rule_id", type = IdType.AUTO)
     private Integer ruleId;
 
-
-
     private Integer limiteAge;
 
     /**

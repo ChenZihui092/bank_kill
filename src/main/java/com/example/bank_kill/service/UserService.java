@@ -30,5 +30,5 @@ public interface UserService extends IService<User> {
 
     Map<String, Object> delete(Integer userId);
 
-    Map<String, Object> update(UserUpdateDto userUpdateDto);
+    Map<String, Object> update(HttpSession session,UserUpdateDto userUpdateDto);
 }

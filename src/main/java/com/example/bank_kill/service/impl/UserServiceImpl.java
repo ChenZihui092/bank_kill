@@ -127,8 +127,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Map<String, Object> update(UserUpdateDto userUpdateDto) {
-        User user = new User(); //后面修改为当前用户
+    public Map<String, Object> update(HttpSession session,UserUpdateDto userUpdateDto) {
+        User user = SessionUtil.getUserFromSession(session);
         if (userUpdateDto.getIsBlack()!=null)user.setIsdelete(userUpdateDto.getIsBlack());
         if (userUpdateDto.getUserName()!=null)user.setUserName(userUpdateDto.getUserName());
         if (userUpdateDto.getAccount()!=null)user.setAccount(userUpdateDto.getAccount());

@@ -18,7 +18,7 @@ public class GoodsDto {
     private Integer goodStock ;
 
     private Integer goodPrice  ;
-    private Integer goodKillPrice   ;
+    private Integer goodKillPrice;
     private Boolean   isDelete  ;
     private Instant createTime  ;
     private Instant modifyTime  ;

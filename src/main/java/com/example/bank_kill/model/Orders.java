@@ -30,7 +30,7 @@ public class Orders implements Serializable {
 
     private Integer userId;
 
-    private Integer hashCode;
+    private String hashCode;
 
     private Date oderTime;
 

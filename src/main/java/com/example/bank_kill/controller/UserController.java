@@ -4,9 +4,11 @@ package com.example.bank_kill.controller;
 import com.example.bank_kill.Dto.LoginDto;
 import com.example.bank_kill.Dto.UserRegDto;
 import com.example.bank_kill.Dto.UserUpdateDto;
+import com.example.bank_kill.constant.MqConstant;
 import com.example.bank_kill.service.UserService;
 import com.example.bank_kill.util.SessionUtil;
 import io.swagger.models.auth.In;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,9 +71,10 @@ public class UserController {
 
     @PostMapping(value = "/update")
     public Map<String, Object> update(
-            UserUpdateDto userUpdateDto
+            UserUpdateDto userUpdateDto,
+            HttpServletRequest request
     ) {
-        return userService.update(userUpdateDto);
+        return userService.update(request.getSession(),userUpdateDto);
     }
 
 }

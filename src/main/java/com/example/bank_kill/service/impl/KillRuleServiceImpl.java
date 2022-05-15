@@ -1,5 +1,6 @@
 package com.example.bank_kill.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.bank_kill.Dto.KillRuleDto;
 import com.example.bank_kill.controller.KillRuleController;
 import com.example.bank_kill.exception.BankException;
@@ -42,10 +43,10 @@ public class KillRuleServiceImpl extends ServiceImpl<KillRuleMapper, KillRule> i
         return killRuleDto;
     }
 
-//    @Autowired
-//    private KillRuleMapper killRuleMapper;
-//    @Override
-//    public void addKillRule(KillRuleDto killRuleDto) throws BankException {
-//
-//    }
+    public KillRule detail(Integer goodId){
+        QueryWrapper<KillRule> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("rule_id",goodId);
+        KillRule killRule = killRuleMapper.selectOne(queryWrapper);
+        return killRule;
+    }
 }

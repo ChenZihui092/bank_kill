@@ -2,6 +2,7 @@ package com.example.bank_kill.mapper;
 
 import com.example.bank_kill.model.KillGoods;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
 /**

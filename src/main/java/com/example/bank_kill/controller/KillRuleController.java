@@ -4,6 +4,7 @@ package com.example.bank_kill.controller;
 import com.example.bank_kill.Dto.KillRuleDto;
 import com.example.bank_kill.constant.ResponseConstant;
 import com.example.bank_kill.service.KillRuleService;
+import com.example.bank_kill.util.BaseResponsePackageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,11 @@ public class KillRuleController {
 
     @Autowired
     private KillRuleService killRuleService;
-    @RequestMapping(value = "view{id}",method = RequestMethod.GET)
-    public Map<String,Object> viewRule(@RequestParam("ruleId") Integer ruleId){
+    @RequestMapping(value = "view/{ruleId}",method = RequestMethod.GET)
+    public Map<String,Object> viewRule(@PathVariable("ruleId") Integer ruleId){
         KillRuleDto  killRuleDto=killRuleService.selectById(ruleId);
         logger.warn("查看规则 {}",killRuleDto);
-        return ResponseConstant.V_UPDATE_SUCCESS;
+        return BaseResponsePackageUtil.baseData(killRuleDto);
     }
 
 }

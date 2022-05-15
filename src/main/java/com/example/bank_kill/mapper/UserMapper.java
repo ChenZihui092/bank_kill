@@ -4,6 +4,7 @@ import com.example.bank_kill.model.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.stereotype.Repository;
 
 /**
  * <p>
@@ -13,7 +14,7 @@ import org.mybatis.spring.annotation.MapperScan;
  * @author jfy
  * @since 2022-05-06
  */
-@Mapper
+@Repository
 public interface UserMapper extends BaseMapper<User> {
 
 }

@@ -14,4 +14,9 @@ public class SessionUtil {
         session.removeAttribute("user");
     }
 
+    public static User getUserFromSession(HttpSession session){
+        if(session.getAttribute("user")==null) return null;
+        return (User) session.getAttribute("user");
+    }
+
 }

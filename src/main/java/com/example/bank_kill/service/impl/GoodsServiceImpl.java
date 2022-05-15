@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.bank_kill.Dto.GoodsDto;
 import com.example.bank_kill.Dto.KillGoodsDto;
 import com.example.bank_kill.Dto.KillRuleDto;
+import com.example.bank_kill.constant.EmployConstant;
+import com.example.bank_kill.constant.LimitConstant;
 import com.example.bank_kill.exception.BankException;
 import com.example.bank_kill.mapper.KillGoodsMapper;
 import com.example.bank_kill.mapper.KillRuleMapper;
@@ -12,12 +14,15 @@ import com.example.bank_kill.model.Goods;
 import com.example.bank_kill.mapper.GoodsMapper;
 import com.example.bank_kill.model.KillGoods;
 import com.example.bank_kill.model.KillRule;
+import com.example.bank_kill.model.User;
 import com.example.bank_kill.service.GoodsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.bank_kill.service.KillGoodsService;
 import com.example.bank_kill.service.KillRuleService;
+import com.example.bank_kill.util.BaseResponsePackageUtil;
 import com.example.bank_kill.util.CacheConstantUtil;
 import com.example.bank_kill.util.CacheUtil;
+import com.example.bank_kill.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,6 +59,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     private KillGoodsService killGoodsService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private KillRuleService killRuleService;
 
     /**
      * 创建商品
@@ -85,11 +95,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goods.setIsdelete(false);
         goods.setRuleId(ruleId);
 
-        Integer goodId = goodsMapper.insert(goods);
-
+        Integer goodId = goods.getGoodId();
         KillGoods killGoods = new KillGoods();
         killGoods.setGoodName(goodsDto.getGoodName());
         killGoods.setGoodStock(goodsDto.getGoodStock());
+        killGoods.setGoodPrice(goodsDto.getGoodKillPrice());
         killGoods.setGoodId(goodId);
         killGoodsMapper.insert(killGoods);
 
@@ -170,9 +180,59 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         killGoodsDto.setGoodStock(killGoods.getGoodStock());
         killGoodsDto.setGoodName(killGoods.getGoodName());
 
-
         return killGoodsDto;
     }
+
+    @Override
+    public boolean isOkToCreateOrder(HttpSession session, Integer goodId) {
+        User user = SessionUtil.getUserFromSession(session);
+        KillRule detail;
+        if((detail=(KillRule)redisTemplate.opsForValue().get(CacheUtil.generateKey(CacheConstantUtil.GOOD_RULE,goodId.toString())))==null){
+            detail = killRuleService.detail(goodId);
+            redisTemplate.opsForValue().set(CacheUtil.generateKey(CacheConstantUtil.GOOD_RULE,goodId.toString()),detail,1,TimeUnit.DAYS);
+        }
+        if(!checkIsOk(user,detail)){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean checkIsOk(User user,KillRule rule){
+        if(user.getAge()<rule.getLimiteAge()) return false;
+        if(user.getIsblack()&&rule.getLimitIsBlack().equals(LimitConstant.LIMITED)) return false;
+        if(user.getStatus().equals(EmployConstant.UNEMPLOYED)&&rule.getLimitIsUnemployment().equals(LimitConstant.LIMITED)) return false;
+        if(killRuleMapper.checkUserQualify(user.getUserId(),rule)>rule.getLimitOverdueFrequency()) return false;
+        return true;
+    }
+
+    @Override
+    public boolean checkTime(Integer goodId) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String timeNow = format.format(new Date(System.currentTimeMillis()));
+        int cnt = goodsMapper.checkTime(goodId, timeNow);
+        if(cnt>=1) return false;
+        return true;
+    }
+
+//    /**
+//     * 缓存中没有库存信息，从MySQL中查询
+//     * @param goodId
+//     * @return
+//     */
+//    public Integer getStock(Integer goodId) {
+//        QueryWrapper<KillGoods> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.select("good_stock").eq("good_Id",goodId);
+//        return killGoodsMapper.selectOne(queryWrapper).getGoodStock();
+//    }
+//
+//    @Override
+//    public int getStockFromRedis(Integer goodId) {
+//        Integer stock = (Integer)redisTemplate.opsForValue().get(CacheUtil.generateCacheKey(CacheConstantUtil.GOOD_STOCK,goodId.toString()));
+//        if(stock==null){
+//            stock = getStock(goodId);
+//        }
+//        return stock;
+//    }
 
 
 }

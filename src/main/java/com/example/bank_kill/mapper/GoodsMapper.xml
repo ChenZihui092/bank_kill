@@ -6,7 +6,6 @@
     <resultMap id="BaseResultMap" type="com.example.bank_kill.model.Goods">
         <id column="good_id" property="goodId" />
         <result column="rule_id" property="ruleId" />
-
         <result column="good_name" property="goodName" />
         <result column="good_Img" property="goodImg" />
         <result column="goods_detail" property="goodsDetail" />
@@ -25,5 +24,14 @@
         good_id, rule_id, good_name, good_Img,
 goods_detail, start_time, end_time, good_stock, good_price, good_kill_price, isDelete, create_time, modify_time
     </sql>
+
+    <select id="checkTime" resultType="Integer">
+        select count(*) from goods
+        <where>
+            good_id = #{goodId}
+            and start_time <![CDATA[<= ]]> #{time}
+            and end_time <![CDATA[<= ]]> #{time}
+        </where>
+    </select>
 
 </mapper>

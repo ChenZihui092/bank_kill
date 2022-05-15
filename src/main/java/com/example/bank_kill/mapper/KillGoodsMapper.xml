@@ -8,12 +8,13 @@
         <result column="good_id" property="goodId" />
         <result column="good_stock" property="goodStock" />
         <result column="good_name" property="goodName" />
-        <result column="is_delete" property="isDelete"></result>
+        <result column="good_price" property="goodPrice"/>
+        <result column="isDelete" property="isDelete"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        kill_good_id, good_id, good_stock, good_name,is_delete
+        kill_good_id, good_id, good_stock, good_name,good_price,isDelete
     </sql>
 
 </mapper>

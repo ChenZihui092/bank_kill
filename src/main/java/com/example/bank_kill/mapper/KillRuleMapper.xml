@@ -22,4 +22,20 @@
         rule_id, limite_age, limit_start_date, limit_overdue_time, limit_overdue_amount, limit_overdue_frequency, limit_is_unemployment, limit_is_black, isDelete, create_time, modify_time
     </sql>
 
+    <select id="checkUserQualify" resultType="Integer">
+        SELECT count(*) from record
+        <where>
+            user_id = #{userId}
+            <if test="rule.getLimitStartDate() != null">
+                and overdue_date>#{rule.limitStartDate}
+            </if>
+            <if test="rule.getLimitOverdueAmount()!=null">
+                and amount>=#{rule.limitOverdueAmount}
+            </if>
+            <if test="rule.getLimitOverdueTime() != null">
+                and overdue_time>#{rule.limitOverdueTime}
+            </if>
+        </where>
+    </select>
+
 </mapper>

@@ -17,4 +17,5 @@ public interface KillRuleService extends IService<KillRule> {
 
 //    void addKillRule(KillRuleDto killRuleDto) throws BankException;
     KillRuleDto selectById(Integer ruleId) throws BankException;
+    KillRule detail(Integer goodId);
 }
