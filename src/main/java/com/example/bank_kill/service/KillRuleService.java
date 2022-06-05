@@ -20,5 +20,7 @@ public interface KillRuleService extends IService<KillRule> {
 
     KillRule detail(Integer goodId);
 
-    KillRule addRule(Integer goodId, KillRuleDto ruleDto);
+    KillRule addRule(Integer goodId,KillRuleDto ruleDto);
+
+    Integer update(KillRuleDto killRuleDto);
 }

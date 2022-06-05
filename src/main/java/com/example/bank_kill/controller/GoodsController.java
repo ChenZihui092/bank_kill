@@ -5,6 +5,7 @@ import com.example.bank_kill.Dto.GoodsDto;
 import com.example.bank_kill.Dto.KillGoodsDto;
 import com.example.bank_kill.constant.ResponseConstant;
 import com.example.bank_kill.service.GoodsService;
+import com.example.bank_kill.util.BaseResponsePackageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +58,9 @@ public class GoodsController {
     public Map<String, Object> viewGoods(@RequestParam("goodId") Integer goodID) {
 
         KillGoodsDto killGoodsDto = goodsService.selectById(goodID);
-        logger.warn("查看商品 {}", killGoodsDto);
-        return ResponseConstant.V_CONTEST_REGISTER_SUCCESS;
+
+        logger.warn("查看商品 {}",killGoodsDto);
+        return BaseResponsePackageUtil.baseData(killGoodsDto);
     }
 
 

@@ -46,7 +46,7 @@ public class ApplyRecordController {
     ) {
         if (!rateLimiter.tryAcquire(1000, TimeUnit.MILLISECONDS))
             throw new BankException("下单失败，限流");
-        if (killGoodsService.getStock(goodId) == 0) throw new BankException("已售罄");
+        if(killGoodsService.getStock(goodId)<=0) throw new BankException("已售罄");
         TempOrderDto tempOrder = applyRecordService.createTempOrder(request.getSession(), goodId);
         return BaseResponsePackageUtil.baseData(
                 ImmutableMap.of(

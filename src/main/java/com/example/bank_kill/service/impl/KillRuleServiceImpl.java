@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.bank_kill.Dto.KillRuleDto;
 import com.example.bank_kill.controller.KillRuleController;
 import com.example.bank_kill.exception.BankException;
+import com.example.bank_kill.model.Goods;
 import com.example.bank_kill.model.KillRule;
 import com.example.bank_kill.mapper.KillRuleMapper;
 import com.example.bank_kill.service.KillRuleService;
@@ -68,5 +69,30 @@ public class KillRuleServiceImpl extends ServiceImpl<KillRuleMapper, KillRule> i
         killRule.setLimitIsUnemployment(killRuleDto.getLimitIsUnemployment());
         killRuleMapper.insert(killRule);
         return killRule;
+    }
+
+    @Override
+    public Integer update(KillRuleDto killRuleDto) {
+        if(killRuleDto.getRuleId() == null ) throw new BankException("killId不能为空");
+        KillRule killRuleOld = killRuleMapper.selectById(killRuleDto.getRuleId());
+        KillRule killRuleNew = new KillRule();
+        killRuleNew.setRuleId(killRuleDto.getRuleId());
+        killRuleNew.setGoodId(killRuleOld.getGoodId());
+        killRuleNew.setLimiteAge(killRuleDto.getLimitAge());
+        killRuleNew.setLimitStartDate(killRuleDto.getLimitStartDate());
+        killRuleNew.setLimitOverdueTime(killRuleDto.getLimitOverdueTime());
+        killRuleNew.setLimitOverdueAmount(killRuleDto.getLimitOverdueAmount());
+        killRuleNew.setLimitOverdueFrequency(killRuleDto.getLimitOverdueFrequency());
+        killRuleNew.setLimitIsUnemployment(killRuleDto.getLimitIsUnemployment());
+        killRuleNew.setLimitIsBlack(killRuleDto.getLimitIsBlack());
+        killRuleNew.setIsdelete(killRuleDto.getIsDelete());
+        killRuleNew.setModifyTime(new Date());
+
+
+        QueryWrapper<KillRule> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("rule_id",killRuleDto.getRuleId());
+        Integer res= killRuleMapper.update(killRuleNew,queryWrapper);
+        return res;
+//        return null;
     }
 }

@@ -47,5 +47,12 @@ public class KillRuleController {
         return BaseResponsePackageUtil.baseData(killRule);
     }
 
+    @RequestMapping(value = "update",method = RequestMethod.POST)
+    private Map<String,Object> updateRule(@RequestBody KillRuleDto killRuleDto){
+        Integer i = killRuleService.update(killRuleDto);
+        logger.warn("修改规则 {}",i);
+        return ResponseConstant.V_UPDATE_SUCCESS;
+    }
+
 }
 
