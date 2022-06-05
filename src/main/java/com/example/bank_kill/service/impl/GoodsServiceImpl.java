@@ -92,7 +92,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         killGoods.setGoodId(goodId);
         killGoodsMapper.insert(killGoods);
 
-        redisTemplate.opsForValue().set(CacheUtil.getCacheKey(CacheConstantUtil.KILL_GOODS,goodId+""),killGoods,1, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(CacheUtil.getCacheKey(CacheConstantUtil.KILL_GOODS, goodId + ""), killGoods, 1, TimeUnit.DAYS);
 
     }
 
@@ -116,15 +116,15 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     /**
      * 修改商品，
-     *
+     * <p>
      * 用户上传需要修改的部分，系统对东西进行判空，if！=null 表示需要进行修改
      */
     @Override
     public void updateGood(GoodsDto goodsDto) throws BankException {
-        if(goodsDto.getGoodsId()==null) throw new BankException("goodId不能为空");
+        if (goodsDto.getGoodsId() == null) throw new BankException("goodId不能为空");
         Goods goodsOld = goodsMapper.selectById(goodsDto.getGoodsId());
-        if(goodsOld == null) throw new BankException("没有在数据库找到对应的商品，请输入正确的goodId");
-        Goods goodsNew  = new Goods();
+        if (goodsOld == null) throw new BankException("没有在数据库找到对应的商品，请输入正确的goodId");
+        Goods goodsNew = new Goods();
         goodsNew.setGoodName(goodsDto.getGoodName());
         goodsNew.setGoodImg(goodsDto.getGoodImg());
         goodsNew.setGoodsDetail(goodsDto.getGoodsDetail());
@@ -136,19 +136,19 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goodsNew.setIsdelete(goodsDto.getIsDelete());
         goodsNew.setModifyTime(new Date());
         QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("good_id",goodsDto.getGoodsId());
-       Integer res= goodsMapper.update(goodsNew,queryWrapper);
-        logger.warn("正在更新goods表格{}",res);
+        queryWrapper.eq("good_id", goodsDto.getGoodsId());
+        Integer res = goodsMapper.update(goodsNew, queryWrapper);
+        logger.warn("正在更新goods表格{}", res);
 
-        KillGoods killGoodsOld =  killGoodsService.selectByGoodId(goodsDto.getGoodsId());
-        if(killGoodsOld == null) throw  new BankException("没有在kill_goods表里找到对应的数据");
+        KillGoods killGoodsOld = killGoodsService.selectByGoodId(goodsDto.getGoodsId());
+        if (killGoodsOld == null) throw new BankException("没有在kill_goods表里找到对应的数据");
         KillGoods killGoodsNew = new KillGoods();
         killGoodsNew.setGoodStock(goodsDto.getGoodStock());
         killGoodsNew.setGoodName(goodsDto.getGoodName());
         killGoodsNew.setDelete(goodsDto.getIsDelete());
         QueryWrapper<KillGoods> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper.eq("kill_good_id",killGoodsOld.getKillGoodId());
-        killGoodsMapper.update(killGoodsNew,queryWrapper1);
+        queryWrapper.eq("kill_good_id", killGoodsOld.getKillGoodId());
+        killGoodsMapper.update(killGoodsNew, queryWrapper1);
         logger.warn("正在更新kill_goods 表格");
 
     }
@@ -157,12 +157,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     /**
      * 用户查看对应的商品
      * 在killGood里查
-     * */
+     */
     @Override
     public KillGoodsDto selectById(Integer goodId) throws BankException {
-        if(goodId == null || goodId<=0) throw new BankException("请正确填写goodId");
-       KillGoods killGoods = killGoodsService.selectByGoodId(goodId);
-       if(killGoods ==null) throw new BankException("没有找到对应的商品");
+        if (goodId == null || goodId <= 0) throw new BankException("请正确填写goodId");
+        KillGoods killGoods = killGoodsService.selectByGoodId(goodId);
+        if (killGoods == null) throw new BankException("没有找到对应的商品");
         KillGoodsDto killGoodsDto = new KillGoodsDto();
         killGoodsDto.setGoodStock(killGoods.getGoodStock());
         killGoodsDto.setGoodName(killGoods.getGoodName());
@@ -174,21 +174,22 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public boolean isOkToCreateOrder(HttpSession session, Integer goodId) {
         User user = SessionUtil.getUserFromSession(session);
         KillRule detail;
-        if((detail=(KillRule)redisTemplate.opsForValue().get(CacheUtil.generateKey(CacheConstantUtil.GOOD_RULE,goodId.toString())))==null){
+        if ((detail = (KillRule) redisTemplate.opsForValue().get(CacheUtil.generateKey(CacheConstantUtil.GOOD_RULE, goodId.toString()))) == null) {
             detail = killRuleService.detail(goodId);
-            redisTemplate.opsForValue().set(CacheUtil.generateKey(CacheConstantUtil.GOOD_RULE,goodId.toString()),detail,1,TimeUnit.DAYS);
+            redisTemplate.opsForValue().set(CacheUtil.generateKey(CacheConstantUtil.GOOD_RULE, goodId.toString()), detail, 1, TimeUnit.DAYS);
         }
-        if(!checkIsOk(user,detail)){
+        if (!checkIsOk(user, detail)) {
             return false;
         }
         return true;
     }
 
-    public boolean checkIsOk(User user,KillRule rule){
-        if(user.getAge()<rule.getLimiteAge()) return false;
-        if(user.getIsblack()&&rule.getLimitIsBlack().equals(LimitConstant.LIMITED)) return false;
-        if(user.getStatus().equals(EmployConstant.UNEMPLOYED)&&rule.getLimitIsUnemployment().equals(LimitConstant.LIMITED)) return false;
-        if(killRuleMapper.checkUserQualify(user.getUserId(),rule)>rule.getLimitOverdueFrequency()) return false;
+    public boolean checkIsOk(User user, KillRule rule) {
+        if (user.getAge() < rule.getLimiteAge()) return false;
+        if (user.getIsblack() && rule.getLimitIsBlack().equals(LimitConstant.LIMITED)) return false;
+        if (user.getStatus().equals(EmployConstant.UNEMPLOYED) && rule.getLimitIsUnemployment().equals(LimitConstant.LIMITED))
+            return false;
+        if (killRuleMapper.checkUserQualify(user.getUserId(), rule) > rule.getLimitOverdueFrequency()) return false;
         return true;
     }
 
@@ -197,7 +198,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeNow = format.format(new Date(System.currentTimeMillis()));
         int cnt = goodsMapper.checkTime(goodId, timeNow);
-        if(cnt>=1) return false;
+        if (cnt >= 1) return false;
         return true;
     }
 

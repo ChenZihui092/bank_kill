@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author jfy
@@ -16,5 +16,6 @@ import javax.servlet.http.HttpSession;
  */
 public interface OrdersService extends IService<Orders> {
     boolean doVerfy(String hash);
-    boolean isSuccess(String hash,Integer userId);
+
+    boolean isSuccess(String hash, Integer userId);
 }

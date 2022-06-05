@@ -1,17 +1,17 @@
 package com.example.bank_kill.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author jfy
@@ -24,7 +24,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-      @TableId(value = "user_id", type = IdType.AUTO)
+    @TableId(value = "user_id", type = IdType.AUTO)
     private Integer userId;
 
     private String account;
@@ -52,6 +52,7 @@ public class User implements Serializable {
     private Boolean isblack;
 
     @TableField("isDelete")
+    @TableLogic
     private Boolean isdelete;
 
     private Date createDate;

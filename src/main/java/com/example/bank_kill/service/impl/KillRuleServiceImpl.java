@@ -25,11 +25,12 @@ import java.util.Date;
 public class KillRuleServiceImpl extends ServiceImpl<KillRuleMapper, KillRule> implements KillRuleService {
     @Autowired
     private KillRuleMapper killRuleMapper;
+
     @Override
     public KillRuleDto selectById(Integer ruleId) throws BankException {
-        if(ruleId == null || ruleId<=0 ) throw new BankException("ruleId请输入正确");
+        if (ruleId == null || ruleId <= 0) throw new BankException("ruleId请输入正确");
         KillRule killRule = killRuleMapper.selectById(ruleId);
-        if(killRule == null) throw new BankException("没有找到对应的规则");
+        if (killRule == null) throw new BankException("没有找到对应的规则");
         KillRuleDto killRuleDto = new KillRuleDto();
         killRuleDto.setRuleId(killRule.getRuleId());
         killRuleDto.setLimitAge(killRule.getLimiteAge());
@@ -45,15 +46,15 @@ public class KillRuleServiceImpl extends ServiceImpl<KillRuleMapper, KillRule> i
         return killRuleDto;
     }
 
-    public KillRule detail(Integer goodId){
+    public KillRule detail(Integer goodId) {
         QueryWrapper<KillRule> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("good_id",goodId);
+        queryWrapper.eq("good_id", goodId);
         KillRule killRule = killRuleMapper.selectOne(queryWrapper);
         return killRule;
     }
 
     @Override
-    public KillRule addRule(Integer goodId,KillRuleDto killRuleDto) {
+    public KillRule addRule(Integer goodId, KillRuleDto killRuleDto) {
         KillRule killRule = new KillRule();
         killRule.setGoodId(goodId);
         killRule.setCreateTime(new Date());

@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author jfy
@@ -39,19 +39,19 @@ public class ApplyRecordController {
 
     RateLimiter rateLimiter = RateLimiter.create(100, 1, TimeUnit.SECONDS);
 
-    @RequestMapping(value = "/createTemp/{goodId}",method = RequestMethod.POST)
-    public Map<String,Object> createTempOrder(
+    @RequestMapping(value = "/create_temp/{goodId}", method = RequestMethod.POST)
+    public Map<String, Object> createTempOrder(
             HttpServletRequest request,
             @PathVariable(name = "goodId") Integer goodId
-    ){
+    ) {
         if (!rateLimiter.tryAcquire(1000, TimeUnit.MILLISECONDS))
             throw new BankException("下单失败，限流");
-        if(killGoodsService.getStock(goodId)==0) throw new BankException("已售罄");
+        if (killGoodsService.getStock(goodId) == 0) throw new BankException("已售罄");
         TempOrderDto tempOrder = applyRecordService.createTempOrder(request.getSession(), goodId);
         return BaseResponsePackageUtil.baseData(
                 ImmutableMap.of(
-                        "msg","请支付",
-                        "res",tempOrder
+                        "msg", "请支付",
+                        "res", tempOrder
                 ));
     }
 

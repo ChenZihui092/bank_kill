@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author jfy
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 public interface KillGoodsService extends IService<KillGoods> {
 
     KillGoods selectByGoodId(Integer goodId) throws BankException;
+
     Integer getStock(Integer goodId);
 
 }

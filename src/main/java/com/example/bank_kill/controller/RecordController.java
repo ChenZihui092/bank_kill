@@ -25,7 +25,7 @@ public class RecordController {
 
     @PostMapping(value = "/create")
     public Map<String, Object> create(
-            RecordDto recordDto
+            @RequestBody RecordDto recordDto
     ) {
         return recordService.create(recordDto);
     }
@@ -40,12 +40,12 @@ public class RecordController {
     @PostMapping(value = "/update")
     public Map<String, Object> update(
             Integer recordId,
-            RecordDto recordDto
+            @RequestBody RecordDto recordDto
     ) {
         return recordService.update(recordId, recordDto);
     }
 
-    @GetMapping(value = "/getAllRecordInfo")
+    @GetMapping(value = "/get_all_recordinfo")
     public Map<String, Object> getAllRecordInfo(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "5") Integer pageSize,

@@ -39,28 +39,27 @@ public class GoodsController {
         return ResponseConstant.V_ADD_SUCCESS;
     }
 
-    @RequestMapping(value = "/delete{id}",method = RequestMethod.GET)
-    public Map<String,Object> deleteGood(@RequestParam("goodId") Integer goodId){
+    @RequestMapping(value = "/delete{id}", method = RequestMethod.GET)
+    public Map<String, Object> deleteGood(@RequestParam("goodId") Integer goodId) {
         goodsService.deleteGood(goodId);
         logger.warn("删除商品");
         return ResponseConstant.V_UPDATE_SUCCESS;
     }
 
-    @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public Map<String,Object> updateGood(@RequestBody GoodsDto goodsDto){
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public Map<String, Object> updateGood(@RequestBody GoodsDto goodsDto) {
         goodsService.updateGood(goodsDto);
         logger.warn("修改商品");
         return ResponseConstant.V_UPDATE_SUCCESS;
     }
 
-    @RequestMapping(value = "view{goodId}",method = RequestMethod.GET)
-    public Map<String,Object> viewGoods(@RequestParam("goodId") Integer goodID){
+    @RequestMapping(value = "view{goodId}", method = RequestMethod.GET)
+    public Map<String, Object> viewGoods(@RequestParam("goodId") Integer goodID) {
 
         KillGoodsDto killGoodsDto = goodsService.selectById(goodID);
-        logger.warn("查看商品 {}",killGoodsDto);
+        logger.warn("查看商品 {}", killGoodsDto);
         return ResponseConstant.V_CONTEST_REGISTER_SUCCESS;
     }
-
 
 
 }

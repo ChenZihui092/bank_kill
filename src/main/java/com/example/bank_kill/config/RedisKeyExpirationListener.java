@@ -34,14 +34,14 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         String orderCode = message.toString();
         System.out.println(orderCode);
         if (!StringUtils.isBlank(orderCode)) {
-            if(orderCode.contains(CacheConstantUtil.TEMP_ORDER)){
+            if (orderCode.contains(CacheConstantUtil.TEMP_ORDER)) {
                 String[] strings = orderCode.split(":");
                 UpdateWrapper<ApplyRecord> updateWrapper = new UpdateWrapper<>();
-                String hash = strings[strings.length-1];
-                String s = new String(Base64.getDecoder().decode(hash)) ;
+                String hash = strings[strings.length - 1];
+                String s = new String(Base64.getDecoder().decode(hash));
                 String[] num = s.split("_");
-                updateWrapper.eq("record_id",Integer.valueOf(num[num.length-2])).set("apply_result", ApplyResultConstant.OVERDUE);
-                applyRecordMapper.update(null,updateWrapper);
+                updateWrapper.eq("record_id", Integer.valueOf(num[num.length - 2])).set("apply_result", ApplyResultConstant.OVERDUE);
+                applyRecordMapper.update(null, updateWrapper);
             }
         }
         System.out.println("过期的订单号是: " + orderCode);

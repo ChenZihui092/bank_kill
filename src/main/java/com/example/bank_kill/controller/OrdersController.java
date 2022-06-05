@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author jfy
@@ -44,19 +44,19 @@ public class OrdersController {
 
     RateLimiter rateLimiter = RateLimiter.create(100);
 
-    @RequestMapping(value = "payOrder/{hash}",method = RequestMethod.POST)
-    public Map<String,Object> payOrder(
+    @RequestMapping(value = "pay_order/{hash}", method = RequestMethod.POST)
+    public Map<String, Object> payOrder(
             @PathVariable(name = "hash") String hash,
             HttpServletRequest request
-    ){
-        if (!rateLimiter.tryAcquire(100,TimeUnit.SECONDS))
+    ) {
+        if (!rateLimiter.tryAcquire(100, TimeUnit.SECONDS))
             throw new BankException("系统繁忙！请稍后再试");
-        if(!ordersService.doVerfy(hash)) return BaseResponsePackageUtil.errorMessage("订单号已过期或不存在");
+        if (!ordersService.doVerfy(hash)) return BaseResponsePackageUtil.errorMessage("订单号已过期或不存在");
         User user = SessionUtil.getUserFromSession(request.getSession());
         /**
          * 如果该用户之前没有购买过该产品，并且库存充足，就
          */
-        if(ordersService.isSuccess(hash,user.getUserId()))
+        if (ordersService.isSuccess(hash, user.getUserId()))
             return BaseResponsePackageUtil.succeedMessage("购买成功");
         return BaseResponsePackageUtil.succeedMessage("抱歉！手速慢了");
     }
