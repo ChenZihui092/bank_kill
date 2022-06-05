@@ -5,6 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.bank_kill.model.KillRule">
         <id column="rule_id" property="ruleId" />
+        <result column="good_id" property="goodId"/>
         <result column="limite_age" property="limiteAge" />
         <result column="limit_start_date" property="limitStartDate" />
         <result column="limit_overdue_time" property="limitOverdueTime" />
@@ -19,7 +20,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        rule_id, limite_age, limit_start_date, limit_overdue_time, limit_overdue_amount, limit_overdue_frequency, limit_is_unemployment, limit_is_black, isDelete, create_time, modify_time
+        rule_id,good_id, limite_age, limit_start_date, limit_overdue_time, limit_overdue_amount, limit_overdue_frequency, limit_is_unemployment, limit_is_black, isDelete, create_time, modify_time
     </sql>
 
     <select id="checkUserQualify" resultType="Integer">

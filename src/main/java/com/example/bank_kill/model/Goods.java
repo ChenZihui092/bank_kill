@@ -27,8 +27,6 @@ public class Goods implements Serializable {
     @TableId(value = "good_id", type = IdType.AUTO)
     private Integer goodId;
 
-    private Integer ruleId;
-
     private String goodName;
 
     @TableField("good_Img")

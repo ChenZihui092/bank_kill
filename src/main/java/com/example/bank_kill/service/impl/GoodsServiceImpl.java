@@ -68,33 +68,22 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
      */
     @Override
     public void addGood(GoodsDto goodsDto) throws BankException {
-        if (goodsDto.getGoodsId() != null) throw new BankException("goodId不用传");
         if (goodsDto.getStartTime() == null || goodsDto.getEndTime() == null || goodsDto.getGoodStock() == null || goodsDto.getGoodPrice() == null || goodsDto.getGoodPrice() < 0
                 || goodsDto.getGoodKillPrice() == null || goodsDto.getGoodKillPrice() < 0)
             throw new BankException("请查看日期、价格、库存是否填写规范");
-        if (goodsDto.getKillRuleDto() == null) throw new BankException("创建商品时，必须填写规则");
-
-
-        KillRuleDto killRuleDto = goodsDto.getKillRuleDto();
-        KillRule killRule = new KillRule();
-        killRule.setCreateTime(new Date());
-        killRule.setIsdelete(false);
-        killRule.setLimiteAge(killRuleDto.getLimitAge());
-        killRule.setLimitIsBlack(killRuleDto.getLimitIsBlack());
-        int ruleId = killRuleMapper.insert(killRule);
-/**省略set*/
+        /**省略set*/
         Goods goods = new Goods();
         goods.setCreateTime(new Date());
         goods.setGoodImg(goodsDto.getGoodImg());
         goods.setGoodsDetail(goodsDto.getGoodsDetail());
+        goods.setGoodStock(goodsDto.getGoodStock());
         goods.setGoodName(goodsDto.getGoodName());
         goods.setEndTime(goodsDto.getEndTime());
         goods.setStartTime(goodsDto.getStartTime());
         goods.setGoodKillPrice(goodsDto.getGoodKillPrice());
         goods.setGoodPrice(goodsDto.getGoodPrice());
         goods.setIsdelete(false);
-        goods.setRuleId(ruleId);
-
+        goodsMapper.insert(goods);
         Integer goodId = goods.getGoodId();
         KillGoods killGoods = new KillGoods();
         killGoods.setGoodName(goodsDto.getGoodName());
@@ -104,7 +93,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         killGoodsMapper.insert(killGoods);
 
         redisTemplate.opsForValue().set(CacheUtil.getCacheKey(CacheConstantUtil.KILL_GOODS,goodId+""),killGoods,1, TimeUnit.DAYS);
-
 
     }
 
@@ -137,7 +125,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         Goods goodsOld = goodsMapper.selectById(goodsDto.getGoodsId());
         if(goodsOld == null) throw new BankException("没有在数据库找到对应的商品，请输入正确的goodId");
         Goods goodsNew  = new Goods();
-        goodsNew.setRuleId(goodsDto.getKillRuleDto().getRuleId());
         goodsNew.setGoodName(goodsDto.getGoodName());
         goodsNew.setGoodImg(goodsDto.getGoodImg());
         goodsNew.setGoodsDetail(goodsDto.getGoodsDetail());

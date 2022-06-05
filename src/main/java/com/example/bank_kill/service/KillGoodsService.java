@@ -18,4 +18,5 @@ public interface KillGoodsService extends IService<KillGoods> {
 
     KillGoods selectByGoodId(Integer goodId) throws BankException;
     Integer getStock(Integer goodId);
+
 }
