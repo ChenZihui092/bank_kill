@@ -45,7 +45,7 @@ public class KillGoodsServiceImpl extends ServiceImpl<KillGoodsMapper, KillGoods
 
     @Override
     public Integer getStock(Integer goodId) {
-        Integer stock = (Integer)redisTemplate.opsForValue().get(CacheUtil.generateCacheKey(CacheConstantUtil.GOOD_STOCK,goodId.toString()));
+        Integer stock = (Integer)redisTemplate.opsForValue().get(CacheUtil.generateKey(CacheConstantUtil.GOOD_STOCK,goodId.toString()));
         if(stock==null){
             stock = getStockFromMySQL(goodId);
         }
