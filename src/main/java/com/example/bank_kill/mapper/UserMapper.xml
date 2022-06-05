@@ -4,28 +4,28 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.bank_kill.model.User">
-        <id column="user_id" property="userId" />
-        <result column="account" property="account" />
-        <result column="pwd" property="pwd" />
-        <result column="user_name" property="userName" />
-        <result column="tel" property="tel" />
-        <result column="idCard" property="idcard" />
-        <result column="sex" property="sex" />
-        <result column="age" property="age" />
-        <result column="user_type" property="userType" />
-        <result column="address" property="address" />
-        <result column="status" property="status" />
-        <result column="isBlack" property="isblack" />
-        <result column="isDelete" property="isdelete" />
-        <result column="create_date" property="createDate" />
-        <result column="modify_date" property="modifyDate" />
+        <id column="user_id" property="userId"/>
+        <result column="account" property="account"/>
+        <result column="pwd" property="pwd"/>
+        <result column="user_name" property="userName"/>
+        <result column="tel" property="tel"/>
+        <result column="idCard" property="idcard"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="user_type" property="userType"/>
+        <result column="address" property="address"/>
+        <result column="status" property="status"/>
+        <result column="isBlack" property="isblack"/>
+        <result column="isDelete" property="isdelete"/>
+        <result column="create_date" property="createDate"/>
+        <result column="modify_date" property="modifyDate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        user_id, account, pwd, user_name, tel, idCard, sex, age, user_type, address, status, isBlack, isDelete, create_date, modify_date
+        user_id
+        , account, pwd, user_name, tel, idCard, sex, age, user_type, address, status, isBlack, isDelete, create_date, modify_date
     </sql>
-
 
 
 </mapper>

@@ -41,13 +41,13 @@ public class KillSuccessConsumer {
 
     @RabbitHandler
     @Transactional
-    public void handleMsg(@Payload OrderMsg orderMsg){
+    public void handleMsg(@Payload OrderMsg orderMsg) {
         UpdateWrapper<ApplyRecord> updateWrapper = new UpdateWrapper<>();
-        Map<String,Object> params = new HashMap<>();
-        params.put("good_id",orderMsg.getGoodId());
-        params.put("user_id",orderMsg.getUserId());
+        Map<String, Object> params = new HashMap<>();
+        params.put("good_id", orderMsg.getGoodId());
+        params.put("user_id", orderMsg.getUserId());
         updateWrapper.allEq(params).set("apply_result", ApplyResultConstant.ACCOMPLISH);
-        applyRecordMapper.update(null,updateWrapper);
+        applyRecordMapper.update(null, updateWrapper);
         Orders orders = new Orders();
         orders.setGoodId(orderMsg.getGoodId());
         orders.setHashCode(orderMsg.getHashCode());

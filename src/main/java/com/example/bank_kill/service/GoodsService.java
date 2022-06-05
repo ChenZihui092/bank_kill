@@ -21,10 +21,15 @@ import java.util.Map;
 public interface GoodsService extends IService<Goods> {
 
     void addGood(GoodsDto goodsDto) throws BankException;
-    void deleteGood(Integer goodId) throws  BankException;
+
+    void deleteGood(Integer goodId) throws BankException;
+
     void updateGood(GoodsDto goodsDto) throws BankException;
+
     KillGoodsDto selectById(Integer goodId) throws BankException;
-    boolean isOkToCreateOrder(HttpSession session,Integer goodId);
+
+    boolean isOkToCreateOrder(HttpSession session, Integer goodId);
+
     boolean checkTime(Integer goodId);
 //    int getStockFromRedis(Integer goodId);
 }

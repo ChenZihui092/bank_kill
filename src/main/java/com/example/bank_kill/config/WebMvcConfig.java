@@ -11,13 +11,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     /**
      * 在自定义控制器之前执行
+     *
      * @param registry
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(MyInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login","/user/reg")
+                .excludePathPatterns("/user/login", "/user/reg")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
 //        registry.addInterceptor()
     }
@@ -31,7 +32,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public MyInterceptor MyInterceptor(){
+    public MyInterceptor MyInterceptor() {
         return new MyInterceptor();
     }
 

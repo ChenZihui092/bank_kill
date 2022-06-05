@@ -52,7 +52,7 @@ public class UserController {
         return userService.logout(request.getSession());
     }
 
-    @GetMapping(value = "/getAllUserInfo")
+    @GetMapping(value = "/get_all_userinfo")
     public Map<String, Object> getAllUserInfo(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "5") Integer pageSize,
@@ -64,17 +64,17 @@ public class UserController {
 
     @PostMapping(value = "/delete")
     public Map<String, Object> delete(
-        Integer userId
+            Integer userId
     ) {
         return userService.delete(userId);
     }
 
     @PostMapping(value = "/update")
     public Map<String, Object> update(
-            UserUpdateDto userUpdateDto,
+            @RequestBody UserUpdateDto userUpdateDto,
             HttpServletRequest request
     ) {
-        return userService.update(request.getSession(),userUpdateDto);
+        return userService.update(request.getSession(), userUpdateDto);
     }
 
 }

@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author jfy
@@ -58,6 +58,7 @@ public class ApplyRecordServiceImpl extends ServiceImpl<ApplyRecordMapper, Apply
      * 2.生成ApplyRecord记录，result设置为“已下单”
      * 3.生成订单信息返回，同时将订单编号存入redis，过期时间为15min
      * 4.配置redis过期监听器，对于15min还未付款的订单，更新ApplyRecord表中的result为“未付款”
+     *
      * @param session
      * @param goodId
      * @return
@@ -65,8 +66,8 @@ public class ApplyRecordServiceImpl extends ServiceImpl<ApplyRecordMapper, Apply
     @Override
     @Transactional
     public TempOrderDto createTempOrder(HttpSession session, Integer goodId) {
-        if(!goodsService.isOkToCreateOrder(session,goodId)) throw new BankException("您不满足此次秒杀条件，请阅读规则");
-        if(!goodsService.checkTime(goodId)) throw new BankException("当前不在秒杀时间内!");
+        if (!goodsService.isOkToCreateOrder(session, goodId)) throw new BankException("您不满足此次秒杀条件，请阅读规则");
+        if (!goodsService.checkTime(goodId)) throw new BankException("当前不在秒杀时间内!");
         KillGoods goods = killGoodsMapper.selectById(goodId);
         User user = SessionUtil.getUserFromSession(session);
         ApplyRecord applyRecord = new ApplyRecord();
@@ -81,7 +82,7 @@ public class ApplyRecordServiceImpl extends ServiceImpl<ApplyRecordMapper, Apply
         applyRecord.setCreateTime(new Date(System.currentTimeMillis()));
         applyRecordMapper.insert(applyRecord);
         //创建订单编号的Hash码，支付成功后返回这个Hash码，代表支付成功
-        String hashKey = CacheConstantUtil.SALT+"_"+applyRecord.getRecordId()+"_"+user.getUserId();
+        String hashKey = CacheConstantUtil.SALT + "_" + applyRecord.getRecordId() + "_" + user.getUserId();
         hashKey = Base64.getEncoder().encodeToString(hashKey.getBytes(StandardCharsets.UTF_8));
         TempOrderDto tempOrderDto = new TempOrderDto();
         tempOrderDto.setAmount(goods.getGoodPrice());
@@ -89,8 +90,8 @@ public class ApplyRecordServiceImpl extends ServiceImpl<ApplyRecordMapper, Apply
         tempOrderDto.setGoodName(goods.getGoodName());
         tempOrderDto.setCreateTime(new Date(System.currentTimeMillis()));
         tempOrderDto.setHashKey(hashKey);
-        redisTemplate.opsForValue().set(CacheUtil.generateKey(CacheConstantUtil.TEMP_ORDER,hashKey)
-                ,tempOrderDto,15, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(CacheUtil.generateKey(CacheConstantUtil.TEMP_ORDER, hashKey)
+                , tempOrderDto, 15, TimeUnit.MINUTES);
         return tempOrderDto;
     }
 

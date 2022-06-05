@@ -13,7 +13,7 @@ public class OrderMsg implements Serializable {
     private Integer goodId;
     private Integer userId;
     private String hashCode;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date orderTime;
 

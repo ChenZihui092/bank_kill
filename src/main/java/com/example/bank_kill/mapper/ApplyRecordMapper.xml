@@ -4,21 +4,22 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.bank_kill.model.ApplyRecord">
-        <id column="record_id" property="recordId" />
-        <result column="user_id" property="userId" />
-        <result column="good_id" property="goodId" />
-        <result column="user_name" property="userName" />
-        <result column="good_name" property="goodName" />
-        <result column="apply_time" property="applyTime" />
-        <result column="apply_result" property="applyResult" />
-        <result column="isDelete" property="isdelete" />
-        <result column="create_time" property="createTime" />
-        <result column="modify_time" property="modifyTime" />
+        <id column="record_id" property="recordId"/>
+        <result column="user_id" property="userId"/>
+        <result column="good_id" property="goodId"/>
+        <result column="user_name" property="userName"/>
+        <result column="good_name" property="goodName"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="apply_result" property="applyResult"/>
+        <result column="isDelete" property="isdelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        record_id, user_id, good_id, user_name, good_name, apply_time, apply_result, isDelete, create_time, modify_time
+        record_id
+        , user_id, good_id, user_name, good_name, apply_time, apply_result, isDelete, create_time, modify_time
     </sql>
 
 </mapper>

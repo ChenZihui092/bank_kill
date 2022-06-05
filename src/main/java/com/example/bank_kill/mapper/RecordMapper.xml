@@ -4,19 +4,20 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.bank_kill.model.Record">
-        <id column="record_id" property="recordId" />
-        <result column="user_id" property="userId" />
-        <result column="amount" property="amount" />
-        <result column="overdue_date" property="overdueDate" />
-        <result column="overdue_time" property="overdueTime" />
-        <result column="isBlack" property="isblack" />
-        <result column="create_time" property="createTime" />
-        <result column="modify_time" property="modifyTime" />
+        <id column="record_id" property="recordId"/>
+        <result column="user_id" property="userId"/>
+        <result column="amount" property="amount"/>
+        <result column="overdue_date" property="overdueDate"/>
+        <result column="overdue_time" property="overdueTime"/>
+        <result column="isBlack" property="isblack"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modify_time" property="modifyTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        record_id, user_id, amount, overdue_date, overdue_time, isBlack, create_time, modify_time
+        record_id
+        , user_id, amount, overdue_date, overdue_time, isBlack, create_time, modify_time
     </sql>
 
 </mapper>

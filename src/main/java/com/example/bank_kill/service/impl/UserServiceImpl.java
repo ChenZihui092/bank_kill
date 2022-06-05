@@ -120,28 +120,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public Map<String, Object> delete(Integer userId) {
-        User user = getById(userId);
-        user.setIsdelete(true);
-        userMapper.updateById(user);
+        User user = findById(userId);
+        if (user.getIsdelete()) throw new BankException("该用户已删除！");
+        userMapper.deleteById(userId);
         return ResponseConstant.V_DELETE_SUCCESS;
     }
 
     @Override
-    public Map<String, Object> update(HttpSession session,UserUpdateDto userUpdateDto) {
+    public Map<String, Object> update(HttpSession session, UserUpdateDto userUpdateDto) {
         User user = SessionUtil.getUserFromSession(session);
-        if (userUpdateDto.getIsBlack()!=null)user.setIsdelete(userUpdateDto.getIsBlack());
-        if (userUpdateDto.getUserName()!=null)user.setUserName(userUpdateDto.getUserName());
-        if (userUpdateDto.getAccount()!=null)user.setAccount(userUpdateDto.getAccount());
-        if (userUpdateDto.getAddress()!=null)user.setAddress(userUpdateDto.getAddress());
-        if (userUpdateDto.getUserType()!=null)user.setUserType(userUpdateDto.getUserType());
+        if (userUpdateDto.getIsBlack() != null) user.setIsdelete(userUpdateDto.getIsBlack());
+        if (userUpdateDto.getUserName() != null) user.setUserName(userUpdateDto.getUserName());
+        if (userUpdateDto.getAccount() != null) user.setAccount(userUpdateDto.getAccount());
+        if (userUpdateDto.getAddress() != null) user.setAddress(userUpdateDto.getAddress());
+        if (userUpdateDto.getUserType() != null) user.setUserType(userUpdateDto.getUserType());
 
-        if (userUpdateDto.getAge()!=null)user.setAge(userUpdateDto.getAge());
-        if (userUpdateDto.getSex()!=null)user.setSex(userUpdateDto.getSex());
-        if (userUpdateDto.getIdCard()!=null)user.setIdcard(userUpdateDto.getIdCard());
-        if (userUpdateDto.getPwd()!=null)user.setPwd(userUpdateDto.getPwd());
-        if (userUpdateDto.getStatus()!=null)user.setStatus(userUpdateDto.getStatus());
+        if (userUpdateDto.getAge() != null) user.setAge(userUpdateDto.getAge());
+        if (userUpdateDto.getSex() != null) user.setSex(userUpdateDto.getSex());
+        if (userUpdateDto.getIdCard() != null) user.setIdcard(userUpdateDto.getIdCard());
+        if (userUpdateDto.getPwd() != null)
+            user.setPwd(PasswordUtil.generatePassword(userUpdateDto.getUserName(), userUpdateDto.getPwd()));
+        if (userUpdateDto.getStatus() != null) user.setStatus(userUpdateDto.getStatus());
 
-        if (userUpdateDto.getTel()!=null)user.setTel(userUpdateDto.getTel());
+        if (userUpdateDto.getTel() != null) user.setTel(userUpdateDto.getTel());
         userMapper.updateById(user);
         return ResponseConstant.V_UPDATE_SUCCESS;
     }

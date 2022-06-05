@@ -4,16 +4,17 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.example.bank_kill.model.Orders">
-        <id column="order_id" property="orderId" />
-        <result column="good_id" property="goodId" />
-        <result column="user_id" property="userId" />
-        <result column="hash_code" property="hashCode" />
-        <result column="oder_time" property="oderTime" />
+        <id column="order_id" property="orderId"/>
+        <result column="good_id" property="goodId"/>
+        <result column="user_id" property="userId"/>
+        <result column="hash_code" property="hashCode"/>
+        <result column="oder_time" property="oderTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        order_id, good_id, user_id, hash_code, oder_time
+        order_id
+        , good_id, user_id, hash_code, oder_time
     </sql>
 
 </mapper>

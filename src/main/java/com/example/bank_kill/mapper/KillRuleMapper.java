@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface KillRuleMapper extends BaseMapper<KillRule> {
-    Integer checkUserQualify(int userId,KillRule rule);
+    Integer checkUserQualify(int userId, KillRule rule);
 }

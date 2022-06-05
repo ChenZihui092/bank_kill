@@ -30,18 +30,19 @@ public class KillRuleController {
 
     @Autowired
     private KillRuleService killRuleService;
-    @RequestMapping(value = "view/{rule_id}",method = RequestMethod.GET)
-    public Map<String,Object> viewRule(@PathVariable("rule_id") Integer ruleId){
-        KillRuleDto  killRuleDto=killRuleService.selectById(ruleId);
-        logger.warn("查看规则 {}",killRuleDto);
+
+    @RequestMapping(value = "view/{rule_id}", method = RequestMethod.GET)
+    public Map<String, Object> viewRule(@PathVariable("rule_id") Integer ruleId) {
+        KillRuleDto killRuleDto = killRuleService.selectById(ruleId);
+        logger.warn("查看规则 {}", killRuleDto);
         return BaseResponsePackageUtil.baseData(killRuleDto);
     }
 
-    @RequestMapping(value = "add/{good_id}",method = RequestMethod.POST)
-    private Map<String,Object> addRule(
-        @PathVariable(name = "good_id") int goodId,
-        @RequestBody KillRuleDto ruleDto
-    ){
+    @RequestMapping(value = "add/{good_id}", method = RequestMethod.POST)
+    private Map<String, Object> addRule(
+            @PathVariable(name = "good_id") int goodId,
+            @RequestBody KillRuleDto ruleDto
+    ) {
         KillRule killRule = killRuleService.addRule(goodId, ruleDto);
         return BaseResponsePackageUtil.baseData(killRule);
     }

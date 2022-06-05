@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author jfy
@@ -32,14 +32,14 @@ public class KillGoodsServiceImpl extends ServiceImpl<KillGoodsMapper, KillGoods
     @Override
     public KillGoods selectByGoodId(Integer goodId) throws BankException {
         QueryWrapper<KillGoods> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("good_Id",goodId);
+        queryWrapper.eq("good_Id", goodId);
         KillGoods killGoods = killGoodsMapper.selectOne(queryWrapper);
         return killGoods;
     }
 
-    public Integer getStockFromMySQL(Integer goodId){
+    public Integer getStockFromMySQL(Integer goodId) {
         QueryWrapper<KillGoods> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("good_stock").eq("good_id",goodId);
+        queryWrapper.select("good_stock").eq("good_id", goodId);
         return killGoodsMapper.selectOne(queryWrapper).getGoodStock();
     }
 

@@ -13,12 +13,12 @@ import java.util.Map;
 public class BankErrorController {
 
     @ExceptionHandler(Exception.class)
-    public Map<String,Object> handleGlobalError(HttpServletRequest request, Exception ex){
+    public Map<String, Object> handleGlobalError(HttpServletRequest request, Exception ex) {
         ex.printStackTrace();
         return BaseResponsePackageUtil.errorMessage(ex.getMessage());
     }
 
-    public Map<String,Object> handleEchoError(HttpServletRequest request, BankException ex){
+    public Map<String, Object> handleEchoError(HttpServletRequest request, BankException ex) {
         ex.printStackTrace();
         return BaseResponsePackageUtil.errorMessage(ex.getMessage());
     }

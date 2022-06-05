@@ -14,12 +14,12 @@ public class MyInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(SessionUtil.getUserFromSession(request.getSession())==null){
+        if (SessionUtil.getUserFromSession(request.getSession()) == null) {
             response.setCharacterEncoding("utf8");
             response.setContentType("application/json;charset=UTF-8");
             HashMap<String, Object> ma = new HashMap<>();
-            ma.put("code",response.SC_UNAUTHORIZED);
-            ma.put("msg","请先登录");
+            ma.put("code", response.SC_UNAUTHORIZED);
+            ma.put("msg", "请先登录");
             PrintWriter writer = response.getWriter();
             writer.println(JSON.toJSONString(ma));//转换成JSON格式返回
             return false;

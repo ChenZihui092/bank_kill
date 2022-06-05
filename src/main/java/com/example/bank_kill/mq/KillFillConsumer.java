@@ -22,13 +22,13 @@ public class KillFillConsumer {
     private ApplyRecordMapper applyRecordMapper;
 
     @RabbitHandler
-    public void handler(@Payload OrderMsg orderMsg){
+    public void handler(@Payload OrderMsg orderMsg) {
         UpdateWrapper<ApplyRecord> updateWrapper = new UpdateWrapper<>();
-        Map<String,Object> params = new HashMap<>();
-        params.put("good_id",orderMsg.getGoodId());
-        params.put("user_id",orderMsg.getUserId());
+        Map<String, Object> params = new HashMap<>();
+        params.put("good_id", orderMsg.getGoodId());
+        params.put("user_id", orderMsg.getUserId());
         updateWrapper.allEq(params).set("apply_result", ApplyResultConstant.SORRY_UNSUCCESSFUL);
-        applyRecordMapper.update(null,updateWrapper);
+        applyRecordMapper.update(null, updateWrapper);
     }
 
 }

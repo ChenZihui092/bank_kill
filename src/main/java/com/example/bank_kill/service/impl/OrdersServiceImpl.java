@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author jfy
@@ -48,7 +48,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
     @Override
     public boolean doVerfy(String hash) {
-        if (!redisTemplate.hasKey(CacheUtil.generateKey(CacheConstantUtil.TEMP_ORDER,hash))) return false;
+        if (!redisTemplate.hasKey(CacheUtil.generateKey(CacheConstantUtil.TEMP_ORDER, hash))) return false;
         return true;
     }
 
@@ -56,31 +56,32 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     /**
      * 需要判断该用户是否重复购买，redis中找到购买该产品的用户集合，判断当前用户是否在集合中
      * 先从缓存中读取产品库存，如果大于0表示还有库存，将库存-1
+     *
      * @param hash
      * @return
      */
     @Override
-    public boolean isSuccess(String hash,Integer userId) {
-        TempOrderDto tempOrderDto = (TempOrderDto) redisTemplate.opsForValue().get(CacheUtil.generateKey(CacheConstantUtil.TEMP_ORDER,hash));
+    public boolean isSuccess(String hash, Integer userId) {
+        TempOrderDto tempOrderDto = (TempOrderDto) redisTemplate.opsForValue().get(CacheUtil.generateKey(CacheConstantUtil.TEMP_ORDER, hash));
         Integer stock = killGoodsService.getStock(tempOrderDto.getGoodId());
-        OrderDto orderDto = new OrderDto(tempOrderDto.getGoodId(),userId);
-        if (redisTemplate.opsForSet().isMember(CacheUtil.generateKey(CacheConstantUtil.ORDER_SET,tempOrderDto.getGoodId().toString()),orderDto))
+        OrderDto orderDto = new OrderDto(tempOrderDto.getGoodId(), userId);
+        if (redisTemplate.opsForSet().isMember(CacheUtil.generateKey(CacheConstantUtil.ORDER_SET, tempOrderDto.getGoodId().toString()), orderDto))
             throw new BankException("请勿重复购买");
-        if(stock>0){
-            redisTemplate.opsForValue().increment(CacheUtil.generateKey(CacheConstantUtil.GOOD_STOCK,tempOrderDto.getGoodId().toString()),-1);
-            redisTemplate.opsForSet().add(CacheUtil.generateKey(CacheConstantUtil.ORDER_SET,tempOrderDto.getGoodId().toString()),orderDto);
+        if (stock > 0) {
+            redisTemplate.opsForValue().increment(CacheUtil.generateKey(CacheConstantUtil.GOOD_STOCK, tempOrderDto.getGoodId().toString()), -1);
+            redisTemplate.opsForSet().add(CacheUtil.generateKey(CacheConstantUtil.ORDER_SET, tempOrderDto.getGoodId().toString()), orderDto);
             /**
              * 购买成功发送消息到`购买成功`的消息队列，更新applyRecord表
              */
-            amqpTemplate.convertAndSend(MqConstant.EX_DIRECT,"kill.success",
-                    new OrderMsg(tempOrderDto.getGoodId(),userId,tempOrderDto.getHashKey(),tempOrderDto.getCreateTime()));
+            amqpTemplate.convertAndSend(MqConstant.EX_DIRECT, "kill.success",
+                    new OrderMsg(tempOrderDto.getGoodId(), userId, tempOrderDto.getHashKey(), tempOrderDto.getCreateTime()));
             return true;
         }
         /**
          * 库存为0，发送消息到购买失败队列
          */
-        amqpTemplate.convertAndSend(MqConstant.EX_DIRECT,"kill.fill",
-                new OrderMsg(tempOrderDto.getGoodId(),userId,tempOrderDto.getHashKey(),tempOrderDto.getCreateTime()));
+        amqpTemplate.convertAndSend(MqConstant.EX_DIRECT, "kill.fill",
+                new OrderMsg(tempOrderDto.getGoodId(), userId, tempOrderDto.getHashKey(), tempOrderDto.getCreateTime()));
         return false;
     }
 }
