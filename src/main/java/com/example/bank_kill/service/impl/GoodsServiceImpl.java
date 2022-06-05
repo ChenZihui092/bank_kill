@@ -102,12 +102,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         Goods goods = goodsMapper.selectById(goodId);
         if (goods == null) throw new BankException("没有找到对应的商品，请输入正确的goodId");
         UpdateWrapper<Goods> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("good_id", goodId).set("isDelete", 0);
+        updateWrapper.eq("good_id", goodId).set("isDelete", 1);
         goodsMapper.update(null, updateWrapper);
 
         logger.warn("delete goods , goodId is {}", goodId);
         UpdateWrapper<KillGoods> updateWrapper1 = new UpdateWrapper<>();
-        updateWrapper1.eq("good_id", goodId).set("is_delete", 0);
+        updateWrapper1.eq("good_id", goodId).set("isDelete", 1);
         killGoodsMapper.update(null, updateWrapper1);
         logger.warn("delete killGood");
 
@@ -145,9 +145,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         KillGoods killGoodsNew = new KillGoods();
         killGoodsNew.setGoodStock(goodsDto.getGoodStock());
         killGoodsNew.setGoodName(goodsDto.getGoodName());
-        killGoodsNew.setDelete(goodsDto.getIsDelete());
+        killGoodsNew.setIsDelete(goodsDto.getIsDelete());
+        killGoodsNew.setKillGoodId(killGoodsOld.getKillGoodId());
+        killGoodsNew.setGoodId(killGoodsOld.getGoodId());
+        killGoodsNew.setGoodPrice(goodsDto.getGoodPrice());
         QueryWrapper<KillGoods> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper.eq("kill_good_id",killGoodsOld.getKillGoodId());
+        queryWrapper1.eq("kill_good_id",killGoodsOld.getKillGoodId());
         killGoodsMapper.update(killGoodsNew,queryWrapper1);
         logger.warn("正在更新kill_goods 表格");
 
@@ -166,7 +169,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         KillGoodsDto killGoodsDto = new KillGoodsDto();
         killGoodsDto.setGoodStock(killGoods.getGoodStock());
         killGoodsDto.setGoodName(killGoods.getGoodName());
-
+        killGoodsDto.setKillGoodId(killGoods.getKillGoodId());
+        killGoodsDto.setGoodId(killGoods.getGoodId());
+        killGoodsDto.setIsDelete(killGoods.getIsDelete());
         return killGoodsDto;
     }
 
@@ -185,10 +190,22 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     public boolean checkIsOk(User user,KillRule rule){
-        if(user.getAge()<rule.getLimiteAge()) return false;
-        if(user.getIsblack()&&rule.getLimitIsBlack().equals(LimitConstant.LIMITED)) return false;
-        if(user.getStatus().equals(EmployConstant.UNEMPLOYED)&&rule.getLimitIsUnemployment().equals(LimitConstant.LIMITED)) return false;
-        if(killRuleMapper.checkUserQualify(user.getUserId(),rule)>rule.getLimitOverdueFrequency()) return false;
+        if(user.getAge()<rule.getLimiteAge()){
+            System.out.println("===================="+"年龄限制"+"==================");
+            return false;
+        }
+        if(user.getIsblack()&&rule.getLimitIsBlack().equals(LimitConstant.LIMITED)){
+            System.out.println("===================="+"失信人"+"==================");
+            return false;
+        }
+        if(user.getStatus().equals(EmployConstant.UNEMPLOYED)&&rule.getLimitIsUnemployment().equals(LimitConstant.LIMITED)){
+            System.out.println("===================="+"失业"+"==================");
+            return false;
+        }
+        if(killRuleMapper.checkUserQualify(user.getUserId(),rule)>rule.getLimitOverdueFrequency()){
+            System.out.println("===================="+"欠款次数太多"+"==================");
+            return false;
+        }
         return true;
     }
 
