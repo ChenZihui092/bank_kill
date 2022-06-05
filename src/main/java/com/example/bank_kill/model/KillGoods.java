@@ -35,9 +35,7 @@ public class KillGoods implements Serializable {
     private Integer goodPrice;
 
     @TableField("isDelete")
-    private boolean isDelete;
-
-
+    private Boolean isDelete;
 
 
 }
