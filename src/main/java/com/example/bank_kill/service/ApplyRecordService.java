@@ -1,5 +1,6 @@
 package com.example.bank_kill.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.bank_kill.Dto.TempOrderDto;
 import com.example.bank_kill.model.ApplyRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -16,4 +17,8 @@ import javax.servlet.http.HttpSession;
  */
 public interface ApplyRecordService extends IService<ApplyRecord> {
     TempOrderDto createTempOrder(HttpSession session, Integer goodId);
+
+    IPage<ApplyRecord> getRecord(int page);
+
+    IPage<ApplyRecord> getMyRecord(int page,int userId);
 }

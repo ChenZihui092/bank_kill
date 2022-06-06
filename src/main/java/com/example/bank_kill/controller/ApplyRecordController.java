@@ -1,11 +1,16 @@
 package com.example.bank_kill.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.bank_kill.Dto.TempOrderDto;
 import com.example.bank_kill.exception.BankException;
+import com.example.bank_kill.model.ApplyRecord;
+import com.example.bank_kill.model.User;
 import com.example.bank_kill.service.ApplyRecordService;
 import com.example.bank_kill.service.KillGoodsService;
 import com.example.bank_kill.util.BaseResponsePackageUtil;
+import com.example.bank_kill.util.SessionUtil;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.RateLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +57,32 @@ public class ApplyRecordController {
                 ImmutableMap.of(
                         "msg", "请支付",
                         "res", tempOrder
+                ));
+    }
+
+    @RequestMapping(value = "getRecord/{page}",method = RequestMethod.GET)
+    public Map<String,Object> getRecord(
+            @PathVariable(value = "page") int page
+    ){
+        IPage<ApplyRecord> recordIPage = applyRecordService.getRecord(page);
+        return BaseResponsePackageUtil.baseData(
+                ImmutableMap.of(
+                        "cnt",recordIPage.getSize(),
+                        "res",recordIPage.getRecords()
+                ));
+    }
+
+    @RequestMapping(value = "getMyRecord/{page}",method = RequestMethod.GET)
+    public Map<String,Object> getMyRecord(
+            @PathVariable(name = "page") int page,
+            HttpServletRequest request
+    ){
+        User user = SessionUtil.getUserFromSession(request.getSession());
+        IPage<ApplyRecord> myRecord = applyRecordService.getMyRecord(page,user.getUserId());
+        return BaseResponsePackageUtil.baseData(
+                ImmutableMap.of(
+                        "cnt",myRecord.getSize(),
+                        "res",myRecord.getRecords()
                 ));
     }
 

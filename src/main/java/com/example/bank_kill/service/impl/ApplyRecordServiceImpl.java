@@ -1,13 +1,14 @@
 package com.example.bank_kill.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.bank_kill.Dto.TempOrderDto;
 import com.example.bank_kill.constant.ApplyResultConstant;
 import com.example.bank_kill.exception.BankException;
-import com.example.bank_kill.mapper.GoodsMapper;
 import com.example.bank_kill.mapper.KillGoodsMapper;
 import com.example.bank_kill.model.ApplyRecord;
 import com.example.bank_kill.mapper.ApplyRecordMapper;
-import com.example.bank_kill.model.Goods;
 import com.example.bank_kill.model.KillGoods;
 import com.example.bank_kill.model.User;
 import com.example.bank_kill.service.ApplyRecordService;
@@ -16,12 +17,10 @@ import com.example.bank_kill.service.GoodsService;
 import com.example.bank_kill.util.CacheConstantUtil;
 import com.example.bank_kill.util.CacheUtil;
 import com.example.bank_kill.util.SessionUtil;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
@@ -93,6 +92,23 @@ public class ApplyRecordServiceImpl extends ServiceImpl<ApplyRecordMapper, Apply
         redisTemplate.opsForValue().set(CacheUtil.generateKey(CacheConstantUtil.TEMP_ORDER, hashKey)
                 , tempOrderDto, 15, TimeUnit.MINUTES);
         return tempOrderDto;
+    }
+
+    @Override
+    public IPage<ApplyRecord> getRecord(int page) {
+        QueryWrapper<ApplyRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("record_id");
+        IPage<ApplyRecord> iPage = applyRecordMapper.selectPage(new Page<>(page,20),queryWrapper);
+        return iPage;
+    }
+
+    @Override
+    public IPage<ApplyRecord> getMyRecord(int page,int userId) {
+        QueryWrapper<ApplyRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("record_id");
+        queryWrapper.eq("user_id",userId);
+        IPage<ApplyRecord> iPage = applyRecordMapper.selectPage(new Page<>(page,20),queryWrapper);
+        return iPage;
     }
 
 }

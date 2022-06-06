@@ -9,7 +9,10 @@ import com.example.bank_kill.model.KillRule;
 import com.example.bank_kill.mapper.KillRuleMapper;
 import com.example.bank_kill.service.KillRuleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.bank_kill.util.CacheConstantUtil;
+import com.example.bank_kill.util.CacheUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,6 +29,9 @@ import java.util.Date;
 public class KillRuleServiceImpl extends ServiceImpl<KillRuleMapper, KillRule> implements KillRuleService {
     @Autowired
     private KillRuleMapper killRuleMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public KillRuleDto selectById(Integer ruleId) throws BankException {
@@ -92,6 +98,7 @@ public class KillRuleServiceImpl extends ServiceImpl<KillRuleMapper, KillRule> i
         QueryWrapper<KillRule> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("rule_id",killRuleDto.getRuleId());
         Integer res= killRuleMapper.update(killRuleNew,queryWrapper);
+        redisTemplate.delete(CacheUtil.generateKey(CacheConstantUtil.GOOD_RULE,killRuleNew.getRuleId().toString()));
         return res;
 //        return null;
     }
